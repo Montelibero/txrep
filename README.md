@@ -1,4 +1,4 @@
-# @stellarguard/txrep
+# @montelibero/txrep
 
 [![Latest Version](https://img.shields.io/npm/v/@stellarguard/txrep.svg)](https://img.shields.io/npm/v/@stellarguard/txrep.svg)
 [![NodeJS Support](https://img.shields.io/node/v/@stellarguard/txrep.svg)](https://img.shields.io/node/v/@stellarguard/txrep.svg)
@@ -8,20 +8,20 @@ A TypeScript/JavaScript implementation of [SEP-0011](https://github.com/stellar/
 ## Installation
 
 ```bash
-npm install @stellarguard/txrep --save
+npm install @montelibero/txrep --save
 # or
-yarn add @stellarguard/txrep
+yarn add @montelibero/txrep
 ```
 
 ## Examples
 
-[See a live demo](https://stellarguard.github.io/txrep/demo)
+[See a live demo](https://montelibero.github.io/txrep/demo)
 
 ### Converting a Transaction to Txrep
 
 ```js
-import { toTxrep } from '@stellarguard/txrep';
-import { Transaction, Networks } from 'stellar-sdk';
+import { toTxrep } from '@montelibero/txrep';
+import { Transaction, Networks } from '@stellar/stellar-sdk';
 
 const xdr = 'AAAAACsWS5BDhC5BjpKQtznHFJ3CkU6+XtWopW+t+Q9KoH7QAAAAZAClKY0AAAABAAAAAQAAAABbicmAAAAAAF1q/QAAAAABAAAAFkVuam95IHRoaXMgdHJhbnNhY3Rpb24AAAAAAAEAAAAAAAAAAQAAAABAXzbt2M8i77+AcrmFtqTAFVHDTdOME3rI1A1ALNH3tAAAAAFVU0QAAAAAADJSVDIhkp9uz61Ra68rs3ScZIIgjT8ajX8Kkdc1be0LAAAAABfXk6AAAAAAAAAAAUqgftAAAABA3vtPH60cJ5MntVrxhP3N33P096jLQOflNKcdc6BRJLo2nbem0xtHyv0RhZIkaoV15sJJq5TsN2je22KSIhzlDA=='
 const tx = new Transaction(xdr, Networks.TESTNET);
@@ -33,8 +33,8 @@ const txrep = toTxrep(tx);
 ### Creating and signing a transaction URI
 
 ```js
-import { toTransaction } from '@stellarguard/txrep';
-import { Networks } from 'stellar-sdk';
+import { toTransaction } from '@montelibero/txrep';
+import { Networks } from '@stellar/stellar-sdk';
 
 const txrep = `
 tx.sourceAccount: GAVRMS4QIOCC4QMOSKILOOOHCSO4FEKOXZPNLKFFN6W7SD2KUB7NBPLN

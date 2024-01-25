@@ -1,11 +1,11 @@
 {
-  "name": "@stellarguard/txrep",
+  "name": "@montelibero/txrep",
   "version": "2.0.0",
   "description": "Convert from to and from txrep (SEP0011) and XDR",
   "main": "build/main/index.js",
   "typings": "build/main/index.d.ts",
   "module": "build/module/index.js",
-  "repository": "https://github.com/stellarguard/txrep",
+  "repository": "https://github.com/montelibero/txrep",
   "license": "MIT",
   "keywords": [],
   "scripts": {
@@ -16,9 +16,9 @@
     "demo": "parcel demo/index.html -d build/docs/demo",
     "fix": "run-s fix:*",
     "fix:prettier": "prettier \"src/**/*.ts\" --write",
-    "fix:tslint": "tslint --fix --project .",
+    "fix:eslint": "eslint --fix",
     "test": "run-s build test:*",
-    "test:lint": "tslint --project . && prettier \"src/**/*.ts\" --list-different",
+    "test:lint": "eslint && prettier \"src/**/*.ts\" --list-different",
     "test:unit": "nyc --silent ava",
     "watch": "run-s clean build:main && run-p \"build:main -- -w\" \"test:unit -- --watch\"",
     "cov": "run-s build test:unit cov:html && open-cli coverage/index.html",
@@ -60,35 +60,39 @@
     "@bitjson/typedoc": "^0.15.0-0",
     "@istanbuljs/nyc-config-typescript": "^0.1.3",
     "@material-ui/core": "^4.8.0",
-    "ava": "2.2.0",
+    "@stellar/stellar-sdk": "^11.2.1",
+    "@types/node": "^20.11.6",
+    "@typescript-eslint/eslint-plugin": "^6.19.1",
+    "@typescript-eslint/parser": "^6.19.1",
+    "ava": "^5.3.1",
     "babel-polyfill": "^6.26.0",
     "codecov": "^3.5.0",
     "cz-conventional-changelog": "^2.1.0",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prefer-arrow": "^1.2.3",
+    "eslint-plugin-react": "^7.33.2",
     "gh-pages": "^2.0.1",
     "js-yaml": "^3.13.1",
     "npm-run-all": "^4.1.5",
     "nyc": "^14.1.1",
     "open-cli": "^5.0.0",
-    "parcel-bundler": "^1.12.4",
-    "prettier": "^1.18.2",
+    "parcel-bundler": "^1.12.5",
+    "prettier": "^3.2.4",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "source-map-support": "^0.5.16",
     "standard-version": "^6.0.1",
-    "stellar-sdk": "^5.0.0",
     "trash-cli": "^3.0.0",
     "ts-node": "^8.5.2",
-    "tslint": "^5.18.0",
-    "tslint-config-prettier": "^1.18.0",
-    "tslint-immutable": "^6.0.1",
-    "typescript": "^3.5.3"
+    "typescript": "^5.3.3"
   },
   "ava": {
     "failFast": true,
     "files": [
       "build/main/**/*.spec.js"
     ],
-    "sources": [
+    "ignoredByWatcher": [
       "build/main/**/*.js"
     ]
   },
@@ -107,6 +111,6 @@
     ]
   },
   "peerDependencies": {
-    "stellar-sdk": ">=5.0.0"
+    "@stellar/stellar-sdk": "^11.2.1"
   }
 }

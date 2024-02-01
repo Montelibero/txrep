@@ -18,7 +18,7 @@ export function best_r(rawNumber) {
   let f;
   const fractions = [
     [new BigNumber(0), new BigNumber(1)],
-    [new BigNumber(1), new BigNumber(0)]
+    [new BigNumber(1), new BigNumber(0)],
   ];
   let i = 2;
 
@@ -59,7 +59,7 @@ export function set(obj: object, path: string | [] | any, value: any) {
     (
       a,
       c,
-      i // Iterate all of them except the last one
+      i, // Iterate all of them except the last one
     ) =>
       Object(a[c]) === a[c] // Does the key exist and is its value an object?
         ? // Yes: then follow that path
@@ -69,7 +69,7 @@ export function set(obj: object, path: string | [] | any, value: any) {
             Math.abs(path[i + 1]) >> 0 === +path[i + 1]
               ? [] // Yes: assign a new array object
               : {}), // No: assign a new plain object
-    obj
+    obj,
   )[path[path.length - 1]] = value; // Finally assign the value to the last key
   return obj; // Return the top-level object to allow chaining
 }

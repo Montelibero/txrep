@@ -26,8 +26,8 @@
     "cov:send": "nyc report --reporter=lcov && codecov",
     "cov:check": "nyc report && nyc check-coverage --lines 85 --functions 85 --branches 85",
     "doc": "run-s doc:html && open-cli build/docs/index.html",
-    "doc:html": "typedoc src/ --exclude **/*.spec.ts --target ES6 --mode file --out build/docs",
-    "doc:json": "typedoc src/ --exclude **/*.spec.ts --target ES6 --mode file --json build/docs/typedoc.json",
+    "doc:html": "typedoc src/ --exclude **/*.spec.ts --out build/docs",
+    "doc:json": "typedoc src/ --exclude **/*.spec.ts --json build/docs/typedoc.json",
     "doc:demo": "parcel build demo/index.html -d build/docs/demo --public-url ./ --no-source-maps",
     "doc:publish": "gh-pages -m \"[ci skip] Updates\" -d build/docs",
     "version": "standard-version",
@@ -56,8 +56,6 @@
     "bignumber.js": "^4.0.0"
   },
   "devDependencies": {
-    "@bitjson/npm-scripts-info": "^1.0.0",
-    "@bitjson/typedoc": "^0.15.0-0",
     "@istanbuljs/nyc-config-typescript": "^0.1.3",
     "@material-ui/core": "^4.8.0",
     "@stellar/stellar-sdk": "^11.2.1",
@@ -75,6 +73,7 @@
     "gh-pages": "^2.0.1",
     "js-yaml": "^3.13.1",
     "npm-run-all": "^4.1.5",
+    "npm-scripts-info": "^0.3.9",
     "nyc": "^14.1.1",
     "open-cli": "^5.0.0",
     "parcel-bundler": "^1.12.5",
@@ -85,6 +84,7 @@
     "standard-version": "^6.0.1",
     "trash-cli": "^3.0.0",
     "ts-node": "^8.5.2",
+    "typedoc": "^0.25.7",
     "typescript": "^5.3.3"
   },
   "ava": {

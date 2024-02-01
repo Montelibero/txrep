@@ -1,6 +1,6 @@
 // tslint:disable:no-expression-statement
 import test from 'ava';
-import { Networks, TransactionBuilder } from 'stellar-sdk';
+import { Networks, TransactionBuilder } from '@stellar/stellar-sdk';
 import { toTxrep } from './txToTxrep';
 
 import { readFileSync } from 'fs';
@@ -8,12 +8,12 @@ import yaml from 'js-yaml';
 
 const tests = yaml.safeLoad(readFileSync('tests.yaml', 'utf8'));
 
-tests.forEach(testCase => {
+tests.forEach((testCase) => {
   const tc = testCase.skip ? test.skip : test;
-  tc(testCase.description, t => {
+  tc(testCase.description, (t) => {
     const transaction = TransactionBuilder.fromXDR(
       testCase.xdr,
-      Networks.TESTNET
+      Networks.TESTNET,
     );
     const actual = toTxrep(transaction);
 

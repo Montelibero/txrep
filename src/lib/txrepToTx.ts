@@ -9,25 +9,25 @@ import {
   TimeoutInfinite,
   Transaction,
   TransactionBuilder,
-  xdr
-} from 'stellar-sdk';
+  xdr,
+  TrustLineFlag,
+} from '@stellar/stellar-sdk';
 
 import BigNumber from 'bignumber.js';
 import { set } from './utils';
 
 export function toTransaction(
   txrep: string,
-  networkPassphrase?: string
+  networkPassphrase?: string,
 ): Transaction {
   const obj: any = toObj(txrep);
-  const account = new Account(obj.tx.sourceAccount, obj.tx.seqNum);
-  // hack - build() will increment the sequence number so we have to decrement it first
-  (account as any).sequence = (account as any).sequence.add(-1);
+  const seq = new BigNumber(obj.tx.seqNum);
+  const account = new Account(obj.tx.sourceAccount, seq.minus(1).toString());
   const opts = {
     memo: toMemo(obj.tx.memo),
     fee: toFee(obj.tx.fee),
     timebounds: toTimebounds(obj.tx.timeBounds),
-    networkPassphrase
+    networkPassphrase,
   };
   const builder = new TransactionBuilder(account, opts);
 
@@ -53,8 +53,8 @@ export function toObj(txrep: string): object {
   const obj = {};
   const fields = txrep
     .split('\n')
-    .map(line => line.trim())
-    .filter(l => !!l)
+    .map((line) => line.trim())
+    .filter((l) => !!l)
     .map(parseLine);
 
   fields.forEach(({ path, value }) => {
@@ -163,19 +163,19 @@ function toOperation({ sourceAccount, body }) {
     case 'PATH_PAYMENT_STRICT_RECEIVE':
       return toPathPaymentStrictReceive(
         body.pathPaymentStrictReceiveOp,
-        sourceAccount
+        sourceAccount,
       );
     case 'PATH_PAYMENT_STRICT_SEND':
       return toPathPaymentStrictSend(
         body.pathPaymentStrictSendOp,
-        sourceAccount
+        sourceAccount,
       );
     case 'MANAGE_SELL_OFFER':
       return toManageSellOffer(body.manageSellOfferOp, sourceAccount);
     case 'CREATE_PASSIVE_SELL_OFFER':
       return toCreatePassiveSellOffer(
         body.createPassiveSellOfferOp,
-        sourceAccount
+        sourceAccount,
       );
     case 'SET_OPTIONS':
       return toSetOptions(body.setOptionsOp, sourceAccount);
@@ -202,7 +202,7 @@ function toCreateAccountOperation(op: any, source: string) {
   return Operation.createAccount({
     destination,
     startingBalance: toAmount(startingBalance),
-    source
+    source,
   });
 }
 
@@ -213,7 +213,7 @@ function toPaymentOperation(op: any, source: string) {
     destination,
     asset: toAsset(asset),
     amount: toAmount(amount),
-    source
+    source,
   });
 }
 
@@ -227,7 +227,7 @@ function toPathPaymentStrictReceive(op: any, source: string) {
     destAsset: toAsset(destAsset),
     destAmount: toAmount(destAmount),
     path: path && path.map(toAsset),
-    source
+    source,
   });
 }
 
@@ -241,7 +241,7 @@ function toPathPaymentStrictSend(op: any, source: string) {
     destAsset: toAsset(destAsset),
     destMin: toAmount(destMin),
     path: path && path.map(toAsset),
-    source
+    source,
   });
 }
 
@@ -265,7 +265,7 @@ function toManageSellOffer(op: ManageSellOfferOp, source: string) {
     amount: toAmount(amount),
     price: toPrice(price),
     offerId: offerID,
-    source
+    source,
   });
 }
 
@@ -289,7 +289,7 @@ function toManageBuyOffer(op: ManageBuyOfferOp, source: string) {
     buyAmount: toAmount(buyAmount),
     price: toPrice(price),
     offerId: offerID,
-    source
+    source,
   });
 }
 
@@ -301,7 +301,7 @@ function toCreatePassiveSellOffer(op: any, source: string) {
     buying: toAsset(buying),
     amount: toAmount(amount),
     price: toPrice(price),
-    source
+    source,
   });
 }
 
@@ -330,7 +330,7 @@ function toSetOptions(op: SetOptionsOp = {}, source: string) {
     medThreshold,
     highThreshold,
     homeDomain,
-    signer
+    signer,
   } = op;
 
   let signerOptions: SignerOptions;
@@ -339,19 +339,19 @@ function toSetOptions(op: SetOptionsOp = {}, source: string) {
       case 'G':
         signerOptions = {
           ed25519PublicKey: signer.key,
-          weight: signer.weight
+          weight: signer.weight,
         };
         break;
       case 'X':
         signerOptions = {
           sha256Hash: StrKey.decodeSha256Hash(signer.key),
-          weight: signer.weight
+          weight: signer.weight,
         };
         break;
       case 'T':
         signerOptions = {
           preAuthTx: StrKey.decodePreAuthTx(signer.key),
-          weight: signer.weight
+          weight: signer.weight,
         };
         break;
     }
@@ -367,7 +367,7 @@ function toSetOptions(op: SetOptionsOp = {}, source: string) {
     highThreshold,
     homeDomain,
     signer: signerOptions,
-    source
+    source,
   });
 }
 
@@ -381,7 +381,7 @@ function toChangeTrust(op: ChangeTrustOp, source: string) {
   return Operation.changeTrust({
     asset: toAsset(line),
     limit: limit && toAmount(limit),
-    source
+    source,
   });
 }
 
@@ -395,9 +395,9 @@ function toAllowTrust(op: AllowTrustOp, source: string) {
   const { trustor, asset, authorize } = op;
   return Operation.allowTrust({
     trustor,
-    authorize: toBoolInt(authorize),
+    authorize: toBoolInt(authorize) as TrustLineFlag,
     assetCode: asset,
-    source
+    source,
   });
 }
 
@@ -409,7 +409,7 @@ function toAccountMerge(op: AccountMergeOp, source: string) {
   const { destination } = op;
   return Operation.accountMerge({
     destination,
-    source
+    source,
   });
 }
 
@@ -433,7 +433,7 @@ function toBumpSequence(op: BumpSequenceOp, source: string) {
 
   return Operation.bumpSequence({
     bumpTo,
-    source
+    source,
   });
 }
 
@@ -491,7 +491,7 @@ function toAmount(amount: string) {
 function toPrice({ n, d }: { n: string; d: string }) {
   return {
     n: Number(n),
-    d: Number(d)
+    d: Number(d),
   };
 }
 

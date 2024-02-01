@@ -4,6 +4,7 @@ test
 src/**.js
 .idea/*
 .cache
+.parcel-cache
 coverage
 .nyc_output
 *.log

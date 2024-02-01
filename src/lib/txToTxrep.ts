@@ -6,8 +6,8 @@ import {
   Signer,
   StrKey,
   Transaction,
-  xdr
-} from 'stellar-sdk';
+  xdr,
+} from '@stellar/stellar-sdk';
 
 import BigNumber from 'bignumber.js';
 import { best_r, upperSnakeCase } from './utils';
@@ -40,7 +40,7 @@ function addLine(key: string, value: any, lines: string[]) {
 
 function addTimeBounds(
   timeBounds: { minTime: string; maxTime: string },
-  lines: string[]
+  lines: string[],
 ) {
   if (timeBounds != null) {
     addLine('tx.timeBounds._present', true, lines);
@@ -61,7 +61,7 @@ function addMemo(memo: Memo, lines: string[]) {
       addLine(
         'tx.memo.text',
         JSON.stringify(memo.value.toString('utf-8')),
-        lines
+        lines,
       );
       return;
     case 'id':
@@ -157,7 +157,7 @@ function addOperation(operation: Operation, i: number, lines: string[]) {
 
 function addCreateAccountOperation(
   operation: Operation.CreateAccount,
-  addBodyLine: LineAdder
+  addBodyLine: LineAdder,
 ) {
   addBodyLine('destination', operation.destination);
   addBodyLine('startingBalance', toAmount(operation.startingBalance));
@@ -165,7 +165,7 @@ function addCreateAccountOperation(
 
 function addPaymentOperation(
   operation: Operation.Payment,
-  addBodyLine: LineAdder
+  addBodyLine: LineAdder,
 ) {
   addBodyLine('destination', operation.destination);
   addBodyLine('asset', toAsset(operation.asset));
@@ -174,7 +174,7 @@ function addPaymentOperation(
 
 function addPathPaymentStrictReceiveOp(
   operation: Operation.PathPaymentStrictReceive,
-  addBodyLine: LineAdder
+  addBodyLine: LineAdder,
 ) {
   addBodyLine('sendAsset', toAsset(operation.sendAsset));
   addBodyLine('sendMax', toAmount(operation.sendMax));
@@ -189,7 +189,7 @@ function addPathPaymentStrictReceiveOp(
 
 function addPathPaymentStrictSendOp(
   operation: Operation.PathPaymentStrictSend,
-  addBodyLine: LineAdder
+  addBodyLine: LineAdder,
 ) {
   addBodyLine('sendAsset', toAsset(operation.sendAsset));
   addBodyLine('sendAmount', toAmount(operation.sendAmount));
@@ -203,7 +203,7 @@ function addPathPaymentStrictSendOp(
 }
 function addManageSellOfferOp(
   operation: Operation.ManageSellOffer,
-  addBodyLine: LineAdder
+  addBodyLine: LineAdder,
 ) {
   addBodyLine('selling', toAsset(operation.selling));
   addBodyLine('buying', toAsset(operation.buying));
@@ -214,7 +214,7 @@ function addManageSellOfferOp(
 
 function addCreatePassiveSellOfferOp(
   operation: Operation.CreatePassiveSellOffer,
-  addBodyLine: LineAdder
+  addBodyLine: LineAdder,
 ) {
   addBodyLine('selling', toAsset(operation.selling));
   addBodyLine('buying', toAsset(operation.buying));
@@ -224,7 +224,7 @@ function addCreatePassiveSellOfferOp(
 
 function addSetOptionsOp(
   operation: Operation.SetOptions,
-  addBodyLine: LineAdder
+  addBodyLine: LineAdder,
 ) {
   addBodyLine('inflationDest', operation.inflationDest, true);
   addBodyLine('clearFlags', operation.clearFlags, true);
@@ -249,17 +249,17 @@ function addSigner(signer: Signer, addBodyLine: LineAdder) {
     if ((signer as Signer.Ed25519PublicKey).ed25519PublicKey) {
       addBodyLine(
         'signer.key',
-        (signer as Signer.Ed25519PublicKey).ed25519PublicKey
+        (signer as Signer.Ed25519PublicKey).ed25519PublicKey,
       );
     } else if ((signer as Signer.PreAuthTx).preAuthTx) {
       addBodyLine(
         'signer.key',
-        StrKey.encodePreAuthTx((signer as Signer.PreAuthTx).preAuthTx)
+        StrKey.encodePreAuthTx((signer as Signer.PreAuthTx).preAuthTx),
       );
     } else if ((signer as Signer.Sha256Hash).sha256Hash) {
       addBodyLine(
         'signer.key',
-        StrKey.encodeSha256Hash((signer as Signer.Sha256Hash).sha256Hash)
+        StrKey.encodeSha256Hash((signer as Signer.Sha256Hash).sha256Hash),
       );
     }
     addBodyLine('signer.weight', signer.weight);
@@ -268,9 +268,9 @@ function addSigner(signer: Signer, addBodyLine: LineAdder) {
 
 function addChangeTrustOp(
   operation: Operation.ChangeTrust,
-  addBodyLine: LineAdder
+  addBodyLine: LineAdder,
 ) {
-  addBodyLine('line', toAsset(operation.line));
+  addBodyLine('line', toAsset(operation.line as Asset));
   if (operation.limit) {
     addBodyLine('limit', toAmount(operation.limit));
   }
@@ -278,7 +278,7 @@ function addChangeTrustOp(
 
 function addAllowTrustOp(
   operation: Operation.AllowTrust,
-  addBodyLine: LineAdder
+  addBodyLine: LineAdder,
 ) {
   addBodyLine('trustor', operation.trustor);
   addBodyLine('asset', operation.assetCode);
@@ -287,7 +287,7 @@ function addAllowTrustOp(
 
 function addAccountMergeOp(
   operation: Operation.AccountMerge,
-  addOpLine: LineAdder
+  addOpLine: LineAdder,
 ) {
   // account merge does not include 'accountMergeOp' prefix
   addOpLine('body.destination', operation.destination);
@@ -295,7 +295,7 @@ function addAccountMergeOp(
 
 function addManageDataOp(
   operation: Operation.ManageData,
-  addBodyLine: LineAdder
+  addBodyLine: LineAdder,
 ) {
   addBodyLine('dataName', toString(operation.name));
   addBodyLine('dataValue._present', !!operation.value);
@@ -306,14 +306,14 @@ function addManageDataOp(
 
 function addBumpSequenceOp(
   operation: Operation.BumpSequence,
-  addBodyLine: LineAdder
+  addBodyLine: LineAdder,
 ) {
   addBodyLine('bumpTo', operation.bumpTo);
 }
 
 function addManageBuyOfferOp(
   operation: Operation.ManageBuyOffer,
-  addBodyLine: LineAdder
+  addBodyLine: LineAdder,
 ) {
   addBodyLine('selling', toAsset(operation.selling));
   addBodyLine('buying', toAsset(operation.buying));
@@ -332,7 +332,7 @@ function addSignatures(signatures: xdr.DecoratedSignature[], lines: string[]) {
 function addSignature(
   signature: xdr.DecoratedSignature,
   i: number,
-  lines: string[]
+  lines: string[],
 ) {
   const prefix = `signatures[${i}]`;
   addLine(`${prefix}.hint`, toOpaque(signature.hint()), lines);
